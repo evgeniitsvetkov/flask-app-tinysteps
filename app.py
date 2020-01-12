@@ -1,4 +1,10 @@
 from flask import Flask, render_template, request
+import json
+
+with open('teachers.json', 'r') as f:
+    contents = f.read()
+
+teachers = json.loads(contents)
 
 app = Flask(__name__)
 
@@ -19,7 +25,8 @@ def goals(goal):
 
 @app.route('/profiles/<id>')
 def profiles(id):
-    output = render_template("profile.html")
+    output = render_template("profile.html",
+                             profile=teachers[id])
 
     return output
 

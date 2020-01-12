@@ -6,11 +6,11 @@
 
             <div class="card-body m-4">
                 <div class="row">
-                    <div class="col-5"><img src="../static/pict 1.png" class="img-fluid"></div>
+                    <div class="col-5"><img src="{{ profile.picture }}" class="img-fluid"></div>
                     <div class="col-7">
-                        <h2>Morris Simmmons</h2>
-                        <p><span class="badge badge-secondary mr-2">Для путешествий </span>Рейтинг: 4.8 Ставка: 1200 / час</p>
-                        <p >Native English language teacherHi Everyone! My name is Richard; I am a native English speaker. I was born in South Africa, Spent 12 years living in the UK and am now living in Spain. I have a degree in food science, a TEFL certificate and a level 3 in training and education. I worked in cheese manufacturing for many years and have good knowledge of dairy production and food safety topics.
+                        <h2>{{ profile.name }}</h2>
+                        <p><span class="badge badge-secondary mr-2">Для путешествий </span>Рейтинг: {{ profile.rating }} Ставка: {{ profile.price }} / час</p>
+                        <p >{{ profile.about }}
                             <br> <br>
                         <a href="" class="btn btn-outline-secondary btn-sm ">Отправить сообщение</a>
                     </div>
@@ -19,6 +19,7 @@
 
             <div class="card-body  m-4">
                 <h5 class="mb-4">Записаться на пробный урок</h5>
+                <p>{{ profile.free }}</p>
                 <table class="table">
 
                     <tr>
