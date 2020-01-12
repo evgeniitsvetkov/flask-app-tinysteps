@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request
 import json
+from flask import Flask, render_template, request
+
 
 with open('teachers.json', 'r') as f:
     contents = f.read()
@@ -31,6 +32,13 @@ def profiles(id):
     return output
 
 
+@app.route('/message')
+def message():
+    output = render_template("message.html")
+
+    return output
+
+
 @app.route('/request')
 def pick():
     output = render_template("pick.html")
@@ -41,6 +49,17 @@ def pick():
 @app.route('/booking/<id>')
 def request(id):
     output = render_template("booking.html")
+
+    return output
+
+
+@app.route('/sent', methods=['POST'])
+def sent():
+    client_name = request.form.get("c_name")
+    client_phone = request.form.get("c_phone")
+    output = render_template("sent.html",
+                             client_name=client_name,
+                             client_phone=client_phone)
 
     return output
 
