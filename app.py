@@ -27,7 +27,8 @@ def goals(goal):
 @app.route('/profiles/<id>')
 def profiles(id):
     output = render_template("profile.html",
-                             profile=teachers[id])
+                             profile=teachers[id],
+                             teacher_id=id)
 
     return output
 
