@@ -53,7 +53,7 @@ def request(id):
     return output
 
 
-@app.route('/sent', methods=['POST'])
+@app.route('/sent', methods=['GET', 'POST'])
 def sent():
     client_name = request.form.get("c_name")
     client_phone = request.form.get("c_phone")
