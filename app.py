@@ -48,8 +48,9 @@ def pick():
 
 
 @app.route('/booking/<id>')
-def request(id):
-    output = render_template("booking.html")
+def booking(id):
+    output = render_template("booking.html",
+                             profile=teachers[id])
 
     return output
 
