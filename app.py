@@ -6,7 +6,13 @@ with open('teachers.json', 'r') as f:
     contents = f.read()
 
 teachers = json.loads(contents)
-print(teachers)
+
+
+with open('goals.json', 'r') as f:
+    g = f.read()
+
+goals = json.loads(g)
+
 
 app = Flask(__name__)
 
@@ -22,6 +28,7 @@ def index():
 def goals(goal):
     output = render_template("goal.html",
                              goal=goal,
+                             goals=goals,
                              teachers=teachers)
 
     return output
