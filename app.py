@@ -9,9 +9,9 @@ teachers = json.loads(contents)
 
 
 with open('goals.json', 'r') as f:
-    g = f.read()
+    goals_data = f.read()
 
-goals = json.loads(g)
+goals = json.loads(goals_data)
 
 
 app = Flask(__name__)
