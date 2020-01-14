@@ -6,6 +6,7 @@ with open('teachers.json', 'r') as f:
     contents = f.read()
 
 teachers = json.loads(contents)
+print(teachers)
 
 app = Flask(__name__)
 
@@ -19,7 +20,9 @@ def index():
 
 @app.route('/goals/<goal>')
 def goals(goal):
-    output = render_template("goal.html")
+    output = render_template("goal.html",
+                             goal=goal,
+                             teachers=teachers)
 
     return output
 
