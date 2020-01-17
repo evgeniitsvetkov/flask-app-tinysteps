@@ -14,12 +14,6 @@ with open('teachers.json', 'r') as f:
 teachers_data = json.loads(teachers_data_json)
 
 
-with open('schedule.json', 'r') as f:
-    schedule_data_json = f.read()
-
-schedule_data = json.loads(schedule_data_json)
-
-
 app = Flask(__name__)
 
 
@@ -46,7 +40,6 @@ def goals(goal):
 def profiles(id):
     output = render_template("profile.html",
                              profile=teachers_data[id],
-                             schedule=schedule_data,
                              teacher_id=id)
 
     return output
