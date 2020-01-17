@@ -2,16 +2,22 @@ import json
 from flask import Flask, render_template, request
 
 
-with open('teachers.json', 'r') as f:
-    contents = f.read()
-
-teachers = json.loads(contents)
-
-
 with open('goals.json', 'r') as f:
-    goals_data = f.read()
+    goals_data_json = f.read()
 
-goals = json.loads(goals_data)
+goals_data = json.loads(goals_data_json)
+
+
+with open('teachers.json', 'r') as f:
+    teachers_data_json = f.read()
+
+teachers_data = json.loads(teachers_data_json)
+
+
+with open('schedule.json', 'r') as f:
+    schedule_data_json = f.read()
+
+schedule_data = json.loads(schedule_data_json)
 
 
 app = Flask(__name__)
@@ -19,7 +25,9 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    output = render_template("index.html")
+    output = render_template("index.html",
+                             goals=goals_data.items(),
+                             teachers=teachers_data)
 
     return output
 
@@ -28,8 +36,8 @@ def index():
 def goals(goal):
     output = render_template("goal.html",
                              goal=goal,
-                             goals=goals,
-                             teachers=teachers)
+                             goals=goals_data.items(),
+                             teachers=teachers_data)
 
     return output
 
@@ -37,7 +45,8 @@ def goals(goal):
 @app.route('/profiles/<id>')
 def profiles(id):
     output = render_template("profile.html",
-                             profile=teachers[id],
+                             profile=teachers_data[id],
+                             schedule=schedule_data,
                              teacher_id=id)
 
     return output
@@ -60,7 +69,7 @@ def pick():
 @app.route('/booking/<id>')
 def booking(id):
     output = render_template("booking.html",
-                             profile=teachers[id])
+                             profile=teachers_data[id])
 
     return output
 

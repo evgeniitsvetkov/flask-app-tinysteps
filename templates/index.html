@@ -6,10 +6,13 @@
 
     <div class="text-center mb-5">
         <div class="btn-group mx-auto mb-0" role="group" aria-label="Basic example">
-          <button type="button" class="btn btn-outline-secondary">⛱Для путешествий</button>
-          <button type="button" class="btn btn-outline-secondary">🏫 Для школы</button>
-          <button type="button" class="btn btn-outline-secondary">🏢 Для работы</button>
-          <button type="button" class="btn btn-outline-secondary">🚜 Для переезда</button>
+            {% for goal, title in goals %}
+            <a href="/goals/{{ goal }}" class="btn btn-outline-primary btn-sm">{{ title }} </a>
+            <!-- TODO: навесить ссылки на кнопки 
+            <form action="/goals/{{ goal }}" method="GET">
+                <button type="button" class="btn btn-outline-secondary">{{ title }}</button>
+            </form> -->
+            {% endfor %}
         </div>
     </div>
 
@@ -17,51 +20,22 @@
 
     <div class="w-75 m-auto">
 
-
+    {% for teacher_id, teacher in teachers.items() %}
         <div class="card mb-4">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-3"><img src="../static/pict 1.png" class="img-fluid"></div>
+                    <div class="col-3"><img src="{{ teacher.picture }}" class="img-fluid"></div>
                     <div class="col-9">
-                        <p class="float-right">Рейтинг: 4.8 Ставка: 1200 / час</p>
-                        <h5>Morris Simmmons</h5>
-                        <p>Репетитор американского английского языка. Структурированная система обучения. Всем привет! Я предпочитаю называть себя «тренером» английского языка. Мои занятия похожи на тренировки</p>
-                        <a href="" class="btn btn-primary btn-sm mr-3">Записаться на пробный урок</a>
-                        <a href="" class="btn btn-outline-primary btn-sm">Отправить сообщение</a>
+                        <p class="float-right">Рейтинг: {{ teacher.rating }} Ставка: {{ teacher.price }} / час</p>
+                        <h5>{{ teacher.name }}</h5>
+                        <p>{{ teacher.about|truncate(150) }}</p>
+                        <a href="/profiles/{{ teacher_id }}" class="btn btn-primary btn-sm mr-3">Записаться на пробный урок</a>
+                        <a href="/message" class="btn btn-outline-primary btn-sm">Отправить сообщение</a>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="card mb-4">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-3"><img src="../static/pict 2.png" class="img-fluid"></div>
-                    <div class="col-9">
-                        <p class="float-right">Рейтинг: 4.8 Ставка: 900 / час</p>
-                        <h5>Julie Nguyen</h5>
-                        <p>Сертифицированный репетитор IELTS. Являюсь сертифицировнным CELTA преподавателем английского языка, проживающим за границей. Опыт работы в сфере преподавания - 9 лет.</p>
-                        <a href="" class="btn btn-primary btn-sm mr-3">Записаться на пробный урок</a>
-                        <a href="" class="btn btn-outline-primary btn-sm">Отправить сообщение</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card mb-4">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-3"><img src="../static/pict 3.png" class="img-fluid"></div>
-                    <div class="col-9">
-                        <p class="float-right">Рейтинг: 4.8 Ставка: 1300 / час</p>
-                        <h5>Wendy Edwards</h5>
-                        <p>Молодой и современный репетитор и переводчик с четырёхлетним опытом работы репетиторства Индивидуальные занятия по скайпу, которые ведёт молодой специалист отделения "Перевода </p>
-                        <a href="" class="btn btn-primary btn-sm mr-3">Записаться на пробный урок</a>
-                        <a href="" class="btn btn-outline-primary btn-sm">Отправить сообщение</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+    {% endfor %}
 
 
     </div>
