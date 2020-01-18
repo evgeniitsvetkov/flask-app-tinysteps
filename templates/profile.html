@@ -19,8 +19,6 @@
 
             <div class="card-body  m-4">
                 <h5 class="mb-4">Записаться на пробный урок</h5>
-                <p>{{ profile.free.values() }}</p>
-                <p>{{ profile.free.keys() }}</p>
                 <table class="table">
 
                     <tr>
@@ -34,23 +32,21 @@
                         <th>Вс</th>
                     </tr>
 
-                    {% for hour in profile.free.values() %}
+                    {% set hours = ['8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'] %}
+                    {% for hour_id in range(hours|length) %}
                     <tr>
-                        <td><span class="btn">{{ hour }}</span></td>
-                        <td></td>
+                        <td><span class="btn">{{ hours[hour_id] }}</span></td> 
+                        {% for day in profile.free %}
+                            {% if profile.free[day][hours[hour_id]] == 'True' %}
+                                {% set hour_status_class = 'success' %}
+                                {% set booking_url = '/booking/{{ teacher_id }}' %}
+                            {% else %}
+                                {% set hour_status_class = 'secondary' %}
+                            {% endif %}
+                            <td><a href="{{ booking_url }}" class="btn btn-sm btn-{{ hour_status_class }}">{{ hours[hour_id] }}</a></td>
+                        {% endfor %}
                     </tr>
                     {% endfor %}
-
-                    <tr>
-                        <td><span class="btn">8:00</span></td>
-                        <td><a href="/booking/{{ teacher_id }}" class="btn btn-sm btn-secondary">8:00</a></td>
-                        <td><a href="" class="btn btn-sm btn-secondary">8:00</a></td>
-                        <td><a href="" class="btn btn-sm btn-secondary">8:00</a></td>
-                        <td><a href="" class="btn btn-sm btn-secondary">8:00</a></td>
-                        <td><a href="" class="btn btn-sm btn-secondary">8:00</a></td>
-                        <td>–</td>
-                        <td>–</td>
-                    </tr>
 
                 </table>
             </div>
