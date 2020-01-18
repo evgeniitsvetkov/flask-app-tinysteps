@@ -39,7 +39,7 @@
                         {% for day in profile.free %}
                             {% if profile.free[day][hours[hour_id]] == 'True' %}
                                 {% set hour_status_class = 'success' %}
-                                {% set booking_url = '/booking/{{ teacher_id }}' %}
+                                {% set booking_url = '/booking/'~teacher_id %}
                             {% else %}
                                 {% set hour_status_class = 'secondary' %}
                             {% endif %}
