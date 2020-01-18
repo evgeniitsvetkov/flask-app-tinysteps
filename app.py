@@ -51,9 +51,6 @@ class Teacher(db.Model):
 #    db.session.add(teacher)
 #db.session.commit()
 
-teacher = db.session.query(Teacher).get_or_404(1)
-print(teacher.name)
-
 
 class Goal(db.Model):
     __tablename__ = 'goals'
@@ -76,28 +73,31 @@ db.create_all()
 
 @app.route('/')
 def index():
+    teachers = db.session.query(Teacher).all()
     output = render_template("index.html",
                              goals=goals_data.items(),
-                             teachers=teachers_data)
+                             teachers=teachers)   # данные из БД
 
     return output
 
 
 @app.route('/goals/<goal>')
 def goals(goal):
+    teachers = db.session.query(Teacher).all()
     output = render_template("goal.html",
                              goal=goal,
                              goals=goals_data.items(),
-                             teachers=teachers_data)
+                             teachers=teachers)   # данные из БД
 
     return output
 
 
-@app.route('/profiles/<id>')
-def profiles(id):
+@app.route('/profiles/<teacher_id>')
+def profiles(teacher_id):
+    teacher = db.session.query(Teacher).get_or_404(teacher_id)
     output = render_template("profile.html",
-                             profile=teachers_data[id],
-                             teacher_id=id)
+                             teacher=teacher,   # данные из БД
+                             profile=teachers_data[teacher_id])   # данные расписания из json
 
     return output
 
@@ -116,10 +116,11 @@ def pick():
     return output
 
 
-@app.route('/booking/<id>')
-def booking(id):
+@app.route('/booking/<teacher_id>')
+def booking(teacher_id):
+    teacher = db.session.query(Teacher).get_or_404(teacher_id)
     output = render_template("booking.html",
-                             profile=teachers_data[id])
+                             teacher=teacher)   # данные из БД
 
     return output
 
