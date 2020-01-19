@@ -61,6 +61,12 @@ class Goal(db.Model):
     #teachers = db.relationship(
     #    'Teacher', secondary=teachers_goals_association, back_populates='goals')
 
+# скрипт для первой загрузки данных из  goals.json
+#for goal, title in goals_data.items():
+#    goal = Goal(goal=goal, title=title)
+#    db.session.add(goal)
+#db.session.commit()
+
 
 class Booking(db.Model):
     __tablename__ = 'bookings'
@@ -73,8 +79,10 @@ db.create_all()
 
 @app.route('/')
 def index():
+    goals_new = db.session.query(Goal).all()
     teachers = db.session.query(Teacher).all()
     output = render_template("index.html",
+                             goals_new=goals_new,
                              goals=goals_data.items(),
                              teachers=teachers)   # данные из БД
 
@@ -83,10 +91,12 @@ def index():
 
 @app.route('/goals/<goal>')
 def goals(goal):
+    goals_new = db.session.query(Goal).all()
     teachers = db.session.query(Teacher).all()
     output = render_template("goal.html",
                              goal=goal,
                              goals=goals_data.items(),
+                             goals_new=goals_new,
                              teachers=teachers)   # данные из БД
 
     return output

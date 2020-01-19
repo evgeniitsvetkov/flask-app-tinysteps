@@ -8,19 +8,15 @@
         <div class="btn-group mx-auto mb-0" role="group" aria-label="Basic example">
             {% for goal, title in goals %}
             <a href="/goals/{{ goal }}" class="btn btn-outline-primary btn-sm">{{ title }} </a>
-            <!-- TODO: навесить ссылки на кнопки 
-            <form action="/goals/{{ goal }}" method="GET">
-                <button type="button" class="btn btn-outline-secondary">{{ title }}</button>
-            </form> -->
             {% endfor %}
         </div>
     </div>
 
-    <h5 class="text-center mb-5">Свободны прямо сейчас</h5>
-
-    {% for teacher in teachers_new %}
-        <p>{{ teacher.id }}</p>
+    {% for goal in goals_new %}
+    <a href="/goals/{{ goal.goal }}" class="btn btn-outline-primary btn-sm">{{ goal.title }} </a>
     {% endfor %}
+
+    <h5 class="text-center mb-5">Свободны прямо сейчас</h5>
 
     <div class="w-75 m-auto">
 
