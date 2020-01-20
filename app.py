@@ -1,6 +1,7 @@
 import json
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_wtf import FlaskForm
 from wtforms import StringField
 
@@ -21,6 +22,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 
 teachers_goals_association = db.Table('teachers_goals',
@@ -38,8 +40,8 @@ class Teacher(db.Model):
     rating = db.Column(db.Float, default=4.5)
     picture = db.Column(db.Unicode, default='../static/pict 1.png')
     price = db.Column(db.Integer, nullable=False)
-    #goals = db.relationship(
-    #    'Goal', secondary=teachers_goals_association, back_populates='teachers')
+    goals = db.relationship(
+        'Goal', secondary=teachers_goals_association, back_populates='teachers')
 
     def __repr__(self):
         return 'Teacher %r' % self.name
@@ -55,11 +57,10 @@ class Teacher(db.Model):
 class Goal(db.Model):
     __tablename__ = 'goals'
 
-    id = db.Column(db.Integer, primary_key=True)
-    goal = db.Column(db.String, nullable=False)  # travel
+    id = db.Column(db.String, primary_key=True)  # travel
     title = db.Column(db.Unicode, nullable=False)  # для путешествий
-    #teachers = db.relationship(
-    #    'Teacher', secondary=teachers_goals_association, back_populates='goals')
+    teachers = db.relationship(
+        'Teacher', secondary=teachers_goals_association, back_populates='goals')
 
 # скрипт для первой загрузки данных из  goals.json
 #for goal, title in goals_data.items():
@@ -76,14 +77,19 @@ class Booking(db.Model):
 
 db.create_all()
 
+t = db.session.query(Teacher).get_or_404(1)
+print(t.goals)
+
+g = db.session.query(Goal).get_or_404(1)
+print(g)
+
 
 @app.route('/')
 def index():
-    goals_new = db.session.query(Goal).all()
+    goals = db.session.query(Goal).all()
     teachers = db.session.query(Teacher).all()
     output = render_template("index.html",
-                             goals_new=goals_new,
-                             goals=goals_data.items(),
+                             goals=goals,   # данные из БД
                              teachers=teachers)   # данные из БД
 
     return output
@@ -91,6 +97,7 @@ def index():
 
 @app.route('/goals/<goal>')
 def goals(goal):
+    goal_new = db.session.query(Goal).get_or_404(goal)
     goals_new = db.session.query(Goal).all()
     teachers = db.session.query(Teacher).all()
     output = render_template("goal.html",
