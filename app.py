@@ -6,12 +6,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField
 
 
-with open('goals.json', 'r') as f:
-    goals_data_json = f.read()
-
-goals_data = json.loads(goals_data_json)
-
-
 with open('teachers.json', 'r') as f:
     teachers_data_json = f.read()
 
@@ -57,10 +51,11 @@ class Teacher(db.Model):
 class Goal(db.Model):
     __tablename__ = 'goals'
 
-    id = db.Column(db.String, primary_key=True)  # travel
+    id = db.Column(db.Integer, primary_key=True)  # travel
     title = db.Column(db.Unicode, nullable=False)  # для путешествий
     teachers = db.relationship(
         'Teacher', secondary=teachers_goals_association, back_populates='goals')
+
 
 # скрипт для первой загрузки данных из  goals.json
 #for goal, title in goals_data.items():
@@ -69,19 +64,7 @@ class Goal(db.Model):
 #db.session.commit()
 
 
-class Booking(db.Model):
-    __tablename__ = 'bookings'
-
-    id = db.Column(db.Integer, primary_key=True)
-
-
 db.create_all()
-
-t = db.session.query(Teacher).get_or_404(1)
-print(t.goals)
-
-g = db.session.query(Goal).get_or_404(1)
-print(g)
 
 
 @app.route('/')
@@ -97,13 +80,10 @@ def index():
 
 @app.route('/goals/<goal>')
 def goals(goal):
-    goal_new = db.session.query(Goal).get_or_404(goal)
-    goals_new = db.session.query(Goal).all()
+    goal = db.session.query(Goal).get_or_404(goal)
     teachers = db.session.query(Teacher).all()
     output = render_template("goal.html",
-                             goal=goal,
-                             goals=goals_data.items(),
-                             goals_new=goals_new,
+                             goal=goal,   # данные из БД
                              teachers=teachers)   # данные из БД
 
     return output
