@@ -2,8 +2,7 @@ import json
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_wtf import FlaskForm
-from wtforms import StringField
+from forms import MessageForm, BookingForm
 
 
 with open('teachers.json', 'r') as f:
@@ -13,6 +12,7 @@ teachers_data = json.loads(teachers_data_json)
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'you-will-never-guess'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -36,14 +36,12 @@ class Teacher(db.Model):
     price = db.Column(db.Integer, nullable=False)
     goals = db.relationship(
         'Goal', secondary=teachers_goals_association, back_populates='teachers')
-
-    def __repr__(self):
-        return 'Teacher %r' % self.name
+    #free = db.Column(db.String, nullable=False)
 
 
 # скрипт для первой загрузки данных из teachers.json
 #for t in teachers_data.values():
-#    teacher = Teacher(name=t['name'], about=t['about'], rating=t['rating'], picture=t['picture'], price=t['price'])
+#    teacher = Teacher(name=t['name'], about=t['about'], rating=t['rating'], picture=t['picture'], price=t['price'], free=t['free'])
 #    db.session.add(teacher)
 #db.session.commit()
 
@@ -51,7 +49,8 @@ class Teacher(db.Model):
 class Goal(db.Model):
     __tablename__ = 'goals'
 
-    id = db.Column(db.Integer, primary_key=True)  # travel
+    id = db.Column(db.Integer, primary_key=True)
+    goal = db.Column(db.String, nullable=False) # travel
     title = db.Column(db.Unicode, nullable=False)  # для путешествий
     teachers = db.relationship(
         'Teacher', secondary=teachers_goals_association, back_populates='goals')
@@ -72,8 +71,8 @@ def index():
     goals = db.session.query(Goal).all()
     teachers = db.session.query(Teacher).all()
     output = render_template("index.html",
-                             goals=goals,   # данные из БД
-                             teachers=teachers)   # данные из БД
+                             goals=goals,
+                             teachers=teachers)
 
     return output
 
@@ -83,8 +82,8 @@ def goals(goal):
     goal = db.session.query(Goal).get_or_404(goal)
     teachers = db.session.query(Teacher).all()
     output = render_template("goal.html",
-                             goal=goal,   # данные из БД
-                             teachers=teachers)   # данные из БД
+                             goal=goal,
+                             teachers=teachers)
 
     return output
 
@@ -93,17 +92,27 @@ def goals(goal):
 def profiles(teacher_id):
     teacher = db.session.query(Teacher).get_or_404(teacher_id)
     output = render_template("profile.html",
-                             teacher=teacher,   # данные из БД
+                             teacher=teacher,
                              profile=teachers_data[teacher_id])   # данные расписания из json
 
     return output
 
 
-@app.route('/message')
+@app.route('/message', methods=['GET', 'POST'])
 def message():
-    output = render_template("message.html")
+    teacher_id = request.args.get('teacher')
+    teacher = db.session.query(Teacher).get_or_404(teacher_id)
+    form = MessageForm()
+    output = render_template("message.html",
+                             teacher=teacher,
+                             form=form)
 
     return output
+
+
+@app.route('/message_sent', methods=['POST'])
+def message_sent():
+    return 'Сообщение отправлено'
 
 
 @app.route('/request')
@@ -113,11 +122,18 @@ def pick():
     return output
 
 
-@app.route('/booking/<teacher_id>')
-def booking(teacher_id):
+@app.route('/booking', methods=['GET', 'POST'])
+def booking():
+    day = request.args.get('day')
+    hour = request.args.get('hour')
+    teacher_id = request.args.get('teacher')
     teacher = db.session.query(Teacher).get_or_404(teacher_id)
+    form = BookingForm()
     output = render_template("booking.html",
-                             teacher=teacher)   # данные из БД
+                             day=day,
+                             hour=hour,
+                             teacher=teacher,
+                             form=form)
 
     return output
 

@@ -26,7 +26,7 @@
                         <h5>{{ teacher.name }}</h5>
                         <p>{{ teacher.about|truncate(150) }}</p>
                         <a href="/profiles/{{ teacher.id }}" class="btn btn-primary btn-sm mr-3">Записаться на пробный урок</a>
-                        <a href="/message" class="btn btn-outline-primary btn-sm">Отправить сообщение</a>
+                        <a href="/message?teacher={{ teacher.id }}" class="btn btn-outline-primary btn-sm">Отправить сообщение</a>
                     </div>
                 </div>
             </div>

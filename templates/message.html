@@ -4,12 +4,12 @@
 
      <div class="row mt-5">
         <div class="col-6 offset-3">
-            <form action="" class="card mb-3" >
+            <form action="/message_sent" class="card mb-3" method="POST">
 
 
                   <div class="card-body text-center pt-5">
-                    <img src="../static/pict 1.png" class="mb-3" width="95" alt="">
-                    <h5 class="card-title mt-2 mb-2">Morris Simmmons</h5>
+                    <img src="{{ teacher.picture }}" class="mb-3" width="95" alt="">
+                    <h5 class="card-title mt-2 mb-2">{{ teacher.name }}</h5>
                     <p class="my-1">Отправить сообщение</p>
                   </div>
 
@@ -18,16 +18,20 @@
 
                    <div class="card-body mx-3">
 
-                       <p class="mb-1 mt-2">Вас зовут</p>
-                       <input class="form-control" type="text" placeholder="">
-
-                       <p class="mb-1 mt-2">Ваш телефон</p>
-                       <input class="form-control" type="text" placeholder="">
-
-                        <p class="mb-1 mt-2">Сообщение</p>
-                       <input class="form-control" type="text" placeholder="">
-
-                       <input type="submit" class="btn btn-primary btn-block mt-4" value="Записаться на пробный урок">
+                  {{ form.hidden_tag() }}
+                       <p>
+                           {{ form.name.label }}<br>
+                           {{ form.name(size=32) }}
+                       </p>
+                       <p>
+                           {{ form.phone.label }}<br>
+                           {{ form.phone(size=32) }}
+                       </p>
+                       <p>
+                           {{ form.message.label }}<br>
+                           {{ form.message(size=32) }}
+                       </p>
+                       <p>{{ form.submit() }}</p>
 
                    </div>
 

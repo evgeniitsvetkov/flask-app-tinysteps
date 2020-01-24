@@ -11,13 +11,24 @@
                     <img src="{{ teacher.picture }}" class="mb-3" width="95" alt="">
                     <h5 class="card-title mt-2 mb-2">{{ teacher.name }}</h5>
                     <p class="my-1">Запись на пробный урок</p>
-                    <p class="my-1">Вторник, 12:00</p>
+                    <p class="my-1">{{ day }}, {{ hour }}</p>
                   </div>
 
 
                    <hr/>
 
                    <div class="card-body mx-3">
+
+                       {{ form.hidden_tag() }}
+                       <p>
+                           {{ form.name.label }}<br>
+                           {{ form.name(size=32) }}
+                       </p>
+                       <p>
+                           {{ form.phone.label }}<br>
+                           {{ form.phone(size=32) }}
+                       </p>
+                       <p>{{ form.submit() }}</p>
 
                        <p class="mb-1 mt-2">Вас зовут</p>
                        <input class="form-control" type="text" name="c_name" placeholder="">

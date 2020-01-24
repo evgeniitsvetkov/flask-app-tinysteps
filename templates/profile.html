@@ -12,7 +12,7 @@
                         <p><span class="badge badge-secondary mr-2">Для путешествий </span>Рейтинг: {{ teacher.rating }} Ставка: {{ teacher.price }} / час</p>
                         <p >{{ teacher.about }}
                             <br> <br>
-                        <a href="/message" class="btn btn-outline-secondary btn-sm ">Отправить сообщение</a>
+                        <a href="/message?teacher={{ teacher.id }}" class="btn btn-outline-secondary btn-sm ">Отправить сообщение</a>
                     </div>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                         {% for day in profile.free %}
                             {% if profile.free[day][hours[hour_id]] == 'True' %}
                                 {% set hour_status_class = 'success' %}
-                                {% set booking_url = '/booking/'~teacher.id %}
+                                {% set booking_url = url_for('booking', teacher=teacher.id, day=day, hour=hours[hour_id]) %}
                             {% else %}
                                 {% set hour_status_class = 'secondary' %}
                             {% endif %}
