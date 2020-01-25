@@ -1,4 +1,6 @@
 import json
+from random import randint
+
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -50,8 +52,8 @@ class Booking(db.Model):
     __tablename__ = 'bookings'
 
     id = db.Column(db.Integer, primary_key=True)
-    day = db.Column(db.Integer, nullable=False)
-    hour = db.Column(db.Integer, nullable=False)
+    day = db.Column(db.String, nullable=False)
+    hour = db.Column(db.String, nullable=False)
     client_name = db.Column(db.String, nullable=False)
     client_phone = db.Column(db.String, nullable=False)
 
@@ -74,7 +76,7 @@ for t in teachers_data.values():
                       picture=t['picture'], price=t['price'], free=t['free'])
     db.session.add(teacher)
 db.session.commit()
-#"""
+"""
 
 
 # скрипт для первой загрузки данных из goals.json
@@ -87,8 +89,19 @@ goals_data = json.loads(goals_data_json)
 for goal, title in goals_data.items():
     goal = Goal(goal=goal, title=title)
     db.session.add(goal)
+    #goal.teachers.append(teacher)
 db.session.commit()
-#"""
+"""
+
+"""
+# скрипт для первой загрузки данных в teachers_goals_association
+teacher = db.session.query(Teacher).get(randint(1, 12))
+goal = db.session.query(Goal).get(randint(1, 4))
+print(teacher)
+print(goal)
+goal.teachers.append(teacher)
+db.session.commit()
+"""
 
 
 @app.route('/')
@@ -154,8 +167,14 @@ def booking():
     teacher_id = request.args.get('teacher')
     teacher = db.session.query(Teacher).get_or_404(teacher_id)
     form = BookingForm()
+
     if form.validate_on_submit():
+        new_booking = Booking(day=day, hour=hour, client_name='X', client_phone='Y', teacher=teacher)
+        db.session.add(new_booking)
+        db.session.commit()
+
         return redirect('/sent')
+
     output = render_template("booking.html",
                              day=day,
                              hour=hour,
