@@ -2,18 +2,14 @@ import json
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from werkzeug.utils import redirect
 from forms import MessageForm, BookingForm
-
-
-with open('teachers.json', 'r') as f:
-    teachers_data_json = f.read()
-
-teachers_data = json.loads(teachers_data_json)
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'you-will-never-guess'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://dfdlfhqaqadkgd:2a03bd35a434942bf87161053906403340e2187b9f139b1a8ec3ad6eddebc361@ec2-46-137-188-105.eu-west-1.compute.amazonaws.com:5432/d3o5u8br75i2g7'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -34,36 +30,65 @@ class Teacher(db.Model):
     rating = db.Column(db.Float, default=4.5)
     picture = db.Column(db.Unicode, default='../static/pict 1.png')
     price = db.Column(db.Integer, nullable=False)
-    goals = db.relationship(
-        'Goal', secondary=teachers_goals_association, back_populates='teachers')
-    #free = db.Column(db.String, nullable=False)
+    free = db.Column(db.JSON, nullable=False)
 
-
-# скрипт для первой загрузки данных из teachers.json
-#for t in teachers_data.values():
-#    teacher = Teacher(name=t['name'], about=t['about'], rating=t['rating'], picture=t['picture'], price=t['price'], free=t['free'])
-#    db.session.add(teacher)
-#db.session.commit()
+    goals = db.relationship('Goal', secondary=teachers_goals_association, back_populates='teachers')
+    bookings = db.relationship('Booking', back_populates='teacher')
 
 
 class Goal(db.Model):
     __tablename__ = 'goals'
 
     id = db.Column(db.Integer, primary_key=True)
-    goal = db.Column(db.String, nullable=False) # travel
+    goal = db.Column(db.String, nullable=False)  # travel
     title = db.Column(db.Unicode, nullable=False)  # для путешествий
-    teachers = db.relationship(
-        'Teacher', secondary=teachers_goals_association, back_populates='goals')
+
+    teachers = db.relationship('Teacher', secondary=teachers_goals_association, back_populates='goals')
 
 
-# скрипт для первой загрузки данных из  goals.json
-#for goal, title in goals_data.items():
-#    goal = Goal(goal=goal, title=title)
-#    db.session.add(goal)
-#db.session.commit()
+class Booking(db.Model):
+    __tablename__ = 'bookings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    day = db.Column(db.Integer, nullable=False)
+    hour = db.Column(db.Integer, nullable=False)
+    client_name = db.Column(db.String, nullable=False)
+    client_phone = db.Column(db.String, nullable=False)
+
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'))
+    teacher = db.relationship('Teacher', back_populates='bookings')
 
 
 db.create_all()
+
+
+# скрипт для первой загрузки данных из teachers.json
+with open('teachers.json', 'r') as f:
+    teachers_data_json = f.read()
+
+teachers_data = json.loads(teachers_data_json)
+
+"""
+for t in teachers_data.values():
+    teacher = Teacher(name=t['name'], about=t['about'], rating=t['rating'],
+                      picture=t['picture'], price=t['price'], free=t['free'])
+    db.session.add(teacher)
+db.session.commit()
+#"""
+
+
+# скрипт для первой загрузки данных из goals.json
+with open('goals.json', 'r') as f:
+    goals_data_json = f.read()
+
+goals_data = json.loads(goals_data_json)
+
+"""
+for goal, title in goals_data.items():
+    goal = Goal(goal=goal, title=title)
+    db.session.add(goal)
+db.session.commit()
+#"""
 
 
 @app.route('/')
@@ -129,6 +154,8 @@ def booking():
     teacher_id = request.args.get('teacher')
     teacher = db.session.query(Teacher).get_or_404(teacher_id)
     form = BookingForm()
+    if form.validate_on_submit():
+        return redirect('/sent')
     output = render_template("booking.html",
                              day=day,
                              hour=hour,
