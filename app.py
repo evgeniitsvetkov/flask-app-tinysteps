@@ -1,7 +1,7 @@
 import json
 from random import randint
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.utils import redirect
@@ -162,14 +162,19 @@ def pick():
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
     day = request.args.get('day')
+    session['day'] = day
     hour = request.args.get('hour')
+    session['hour'] = hour
     teacher_id = request.args.get('teacher')
     teacher = db.session.query(Teacher).get_or_404(teacher_id)
     form = BookingForm()
 
     if form.validate_on_submit():
         name = form.name.data
+        session['c_name'] = name
         phone = form.phone.data
+        session['c_phone'] = phone
+
         new_booking = Booking(day=day, hour=hour, client_name=name, client_phone=phone, teacher=teacher)
         db.session.add(new_booking)
         db.session.commit()
@@ -187,9 +192,13 @@ def booking():
 
 @app.route('/sent', methods=['GET', 'POST'])
 def sent():
-    client_name = request.form.get("c_name")
-    client_phone = request.form.get("c_phone")
+    day = session.get('day')
+    hour = session.get('hour')
+    client_name = session.get('c_name')
+    client_phone = session.get('c_phone')
     output = render_template("sent.html",
+                             day=day,
+                             hour=hour,
                              client_name=client_name,
                              client_phone=client_phone)
 
