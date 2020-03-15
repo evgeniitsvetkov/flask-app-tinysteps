@@ -1,12 +1,14 @@
+import json
 from random import randint
 
 from flask import Flask, render_template, request, session
 from flask_migrate import Migrate
+from sqlalchemy.sql import func
 from werkzeug.utils import redirect
-from forms import MessageForm, BookingForm
 
 from config import Config
 from models import db, Teacher, Goal, Booking, teachers_data
+from forms import MessageForm, BookingForm
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -18,7 +20,7 @@ migrate = Migrate(app, db)
 @app.route('/')
 def index():
     goals = db.session.query(Goal).all()
-    teachers = db.session.query(Teacher).all()
+    teachers = db.session.query(Teacher).order_by(func.random()).limit(6)
     output = render_template("index.html",
                              goals=goals,
                              teachers=teachers)
@@ -40,6 +42,8 @@ def goals(goal):
 @app.route('/profiles/<teacher_id>')
 def profiles(teacher_id):
     teacher = db.session.query(Teacher).get_or_404(teacher_id)
+    # schedule_string = teacher.free
+    # schedule = json.loads(schedule_string)
     output = render_template("profile.html",
                              teacher=teacher,
                              profile=teachers_data[teacher_id])   # данные расписания из json
@@ -133,4 +137,6 @@ def server_error(e):
 
 
 if __name__ == '__main__':
+#    with app.app_context():
+#        db.create_all()
     app.run()

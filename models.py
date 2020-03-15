@@ -1,6 +1,7 @@
 import json
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.postgresql import JSON
 
 db = SQLAlchemy()
 
@@ -20,7 +21,7 @@ class Teacher(db.Model):
     rating = db.Column(db.Float, default=4.5)
     picture = db.Column(db.Unicode, default='../static/pict 1.png')
     price = db.Column(db.Integer, nullable=False)
-    free = db.Column(db.JSON, nullable=False)
+    free = db.Column(JSON, nullable=False)
 
     goals = db.relationship('Goal', secondary=teachers_goals_association, back_populates='teachers')
     bookings = db.relationship('Booking', back_populates='teacher')
@@ -47,6 +48,12 @@ class Booking(db.Model):
 
     teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'))
     teacher = db.relationship('Teacher', back_populates='bookings')
+
+
+class Order(db.Model):
+    __tablename__ = 'orders'
+
+    id = db.Column(db.Integer, primary_key=True)
 
 
 # скрипт для первой загрузки данных из teachers.json
